@@ -1,0 +1,19 @@
+{
+    "cont_cols": ["time_seconds"],
+    "cat_cols": ["team_id", "player_id", "type_name", "result_name"],
+    "val_split": 0.1,
+    "max_episode_length": 128,
+    "batch_size": 32,
+    "shuffle": true,
+
+    "d_model": 128,
+    "n_head": 4,
+    "num_layers": 2,
+    "emb_dim": 16,
+    "dropout": 0.1,
+
+    "epochs": 10,
+    "learning_rate": 1e-3,
+    
+    "submission_name": "submission.csv"
+}
