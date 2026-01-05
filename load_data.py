@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 from torch.nn.utils.rnn import pad_sequence
@@ -24,12 +25,12 @@ class SoccerDataset(Dataset):
 
         target_row = episode.iloc[-1]
         if self.mode == 'train':
-            target_tensor = torch.tensor(target_row[["end_x", "end_y"]].values, dtype=torch.float32)
+            target_tensor = torch.tensor(target_row[["end_x", "end_y"]].values.astype(np.float32), dtype=torch.float32)
         else:
             target_tensor = torch.zeros(2, dtype=torch.float32)
 
-        cont_values = episode[self.cont_cols].values
-        cat_values = episode[self.cat_cols].values
+        cont_values = episode[self.cont_cols].values.astype(np.float32)
+        cat_values = episode[self.cat_cols].values.astype(np.int64)
 
         # episode 마지막 행의 end_x, end_y 값을 마스킹 (모델이 예측해야하는 값)
         masking_end_x = self.cont_cols.index("end_x")
