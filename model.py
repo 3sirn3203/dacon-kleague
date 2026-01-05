@@ -90,6 +90,20 @@ class MessiTransformer(nn.Module):
         x = self.transformer_encoder(x, src_key_padding_mask=padding_mask)
 
         # pooling and prediction
-        last_token_output = x[:, -1, :]
+        # x: (batch_size, seq_len, d_model)
+        if padding_mask is not None:
+            # padding_mask는 패딩인 부분이 True입니다.
+            # 각 배치의 실제 길이(유효 토큰 개수)를 구합니다.
+            lengths = (~padding_mask).sum(dim=1)
+            # 마지막 유효 토큰의 인덱스는 length - 1 입니다.
+            last_token_indices = lengths - 1
+            
+            # 각 배치별로 마지막 유효 토큰의 벡터를 추출합니다.
+            batch_indices = torch.arange(batch_size, device=x.device)
+            last_token_output = x[batch_indices, last_token_indices, :]
+        else:
+            # 마스크가 없으면 그냥 마지막 토큰 사용
+            last_token_output = x[:, -1, :]
+
         prediction = self.output_head(last_token_output)
         return prediction
